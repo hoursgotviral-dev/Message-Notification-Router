@@ -1,0 +1,6 @@
+message_id,action,message_type,reason,confidence,evidence_message_ids
+msg_023,digest,payment,"The message is a routine notification from a verified bank account received close to the user's quiet hours, making it suitable for a digest rather than an immediate interruption.",0.82,none
+msg_091,mute,scam,"The message is a phishing attempt asking for a verification/login code, matching previous reported scam messages from this sender.",0.99,message_0381;message_0238
+msg_090,notify,personal,A personal message inquiring about a package mix-up during active hours from an unknown contact that requires user attention.,0.78,none
+msg_048,mute,unknown,phishing or payment request with no prior business history,0.9,message_0152;message_0151;message_0237
+msg_040,notify,unknown,direct urgent mention overrides group mute,0.85,message_0136;message_0135
