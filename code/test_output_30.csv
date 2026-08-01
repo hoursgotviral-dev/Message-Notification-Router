@@ -1,0 +1,11 @@
+message_id,action,message_type,reason,confidence,evidence_message_ids
+msg_023,digest,payment,"The message is a routine notification from a verified bank account arriving close to the user's quiet hours, making a digest appropriate rather than an immediate interruption.",0.88,none
+msg_091,mute,scam,"The message is a phishing attempt asking for a verification/login code, matching a pattern of previous reported messages from this sender.",0.99,message_0381;message_0238
+msg_090,notify,personal,"Direct personal inquiry asking to confirm identity regarding a package mix-up, sent outside quiet hours.",0.82,none
+msg_048,mute,scam,phishing or payment request with no prior business history,0.9,message_0152;message_0151;message_0237
+msg_040,notify,urgent,direct urgent mention overrides group mute,0.85,message_0136;message_0135
+msg_075,notify,business_update,A verified ride-booking business sent an active trip/route status update matching a user's current ride context.,0.9,none
+msg_005,notify,event,"The sender is coordinating an active hold and pickup time-sensitive arrangement for an item requested by the user, matching historical engagement patterns where the user frequently responds to similar pickup notices.",0.88,message_0065;message_0049
+msg_104,digest,personal,"The user has a strong pattern of dismissing and not engaging with messages from this sender across history, so non-urgent personal outreach should be deferred to a digest.",0.82,message_0232;message_0383
+msg_069,mute,forward,The message is a generic forwarded greeting and chain-message from a sender with a history of repeated dismissals and no engagement.,0.95,message_0194;message_0193
+msg_107,mute,scam,"The incoming message is a phishing attempt asking for OTP verification and wallet details, triggering the hard override for scam/phishing content.",1.0,message_0213;message_0056;message_0369;message_0045;message_0023;message_0195;message_0235

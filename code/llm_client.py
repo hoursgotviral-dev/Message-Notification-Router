@@ -1,15 +1,53 @@
 import os
+import re
 import json
+import time
 import urllib.request
 import urllib.error
 import logging
+from collections import deque
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
+
+# ---- Rate limiting (Gemini free tier: 15 requests/minute) ----
+_GEMINI_RPM_LIMIT = 15
+_GEMINI_WINDOW_SECONDS = 60
+_gemini_call_times = deque()
+
+
+def _gemini_rate_limit_wait():
+    """Proactively sleep if calling now would exceed the RPM ceiling."""
+    now = time.time()
+    while _gemini_call_times and now - _gemini_call_times[0] > _GEMINI_WINDOW_SECONDS:
+        _gemini_call_times.popleft()
+    if len(_gemini_call_times) >= _GEMINI_RPM_LIMIT:
+        sleep_for = _GEMINI_WINDOW_SECONDS - (now - _gemini_call_times[0]) + 0.5
+        if sleep_for > 0:
+            logging.info(f"[gemini] Proactive rate-limit wait: sleeping {sleep_for:.1f}s")
+            time.sleep(sleep_for)
+    _gemini_call_times.append(time.time())
+
+
+def _parse_retry_delay_seconds(error_body: str, default: float = 30.0) -> float:
+    """Extract retryDelay (e.g. '42s') from a Gemini 429 error body."""
+    try:
+        data = json.loads(error_body)
+        details = data.get("error", {}).get("details", [])
+        for d in details:
+            if d.get("@type", "").endswith("RetryInfo"):
+                delay_str = d.get("retryDelay", "")
+                match = re.match(r"([\d.]+)s?", delay_str)
+                if match:
+                    return float(match.group(1))
+    except Exception:
+        pass
+    return default
+
 
 def call_gemini(prompt, system, is_json, api_key, model="gemini-3.5-flash-lite", media_data=None, mime_type=None):
     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
     parts = [{"text": prompt}]
-    
+
     if media_data and mime_type:
         import base64
         parts.insert(0, {
@@ -18,16 +56,36 @@ def call_gemini(prompt, system, is_json, api_key, model="gemini-3.5-flash-lite",
                 "data": base64.b64encode(media_data).decode("utf-8")
             }
         })
-        
+
     payload = {"contents": [{"role": "user", "parts": parts}]}
     if system: payload["systemInstruction"] = {"parts": [{"text": system}]}
     if is_json: payload["generationConfig"] = {"responseMimeType": "application/json"}
     req = urllib.request.Request(url, json.dumps(payload).encode(), {"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as res:
-        data = json.loads(res.read().decode())
-        text = data["candidates"][0]["content"]["parts"][0]["text"]
-        usage = data.get("usageMetadata", {})
-        return {"text": text, "usage": usage}
+
+    _gemini_rate_limit_wait()
+
+    try:
+        with urllib.request.urlopen(req, timeout=30) as res:
+            data = json.loads(res.read().decode())
+            text = data["candidates"][0]["content"]["parts"][0]["text"]
+            usage = data.get("usageMetadata", {})
+            return {"text": text, "usage": usage}
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        if e.code == 429:
+            delay = _parse_retry_delay_seconds(body)
+            logging.warning(f"[gemini] 429 rate limit. Backing off {delay:.1f}s before one retry.")
+            time.sleep(delay + 1.0)
+            # single retry after respecting retryDelay
+            _gemini_rate_limit_wait()
+            req_retry = urllib.request.Request(url, json.dumps(payload).encode(), {"Content-Type": "application/json"})
+            with urllib.request.urlopen(req_retry, timeout=30) as res:
+                data = json.loads(res.read().decode())
+                text = data["candidates"][0]["content"]["parts"][0]["text"]
+                usage = data.get("usageMetadata", {})
+                return {"text": text, "usage": usage}
+        raise urllib.error.HTTPError(e.url, e.code, body, e.headers, None)
+
 
 def call_claude(prompt, system, is_json, api_key):
     url = "https://api.anthropic.com/v1/messages"
@@ -42,6 +100,7 @@ def call_claude(prompt, system, is_json, api_key):
         usage = data.get("usage", {})
         return {"text": text, "usage": usage}
 
+
 def call_openrouter(prompt, system, is_json, api_key):
     url = "https://openrouter.ai/api/v1/chat/completions"
     messages = ([{"role": "system", "content": system}] if system else []) + [{"role": "user", "content": prompt}]
@@ -55,22 +114,23 @@ def call_openrouter(prompt, system, is_json, api_key):
         usage = data.get("usage", {})
         return {"text": text, "usage": usage}
 
+
 def call_model(prompt, system=None, response_format=None, media_data=None, mime_type=None):
     providers = ["gemini", "claude", "openrouter"]
     adapters = {"gemini": call_gemini, "claude": call_claude, "openrouter": call_openrouter}
     keys = {"gemini": "GEMINI_API_KEY", "claude": "ANTHROPIC_API_KEY", "openrouter": "OPENROUTER_API_KEY"}
-    
+
     history = []
     for attempt, provider in enumerate(providers, 1):
         api_key = os.getenv(keys[provider])
         if not api_key:
             history.append(f"{provider}: skipped (missing {keys[provider]})")
             continue
-            
+
         if media_data and provider != "gemini":
             history.append(f"{provider}: skipped (media input not supported yet)")
             continue
-            
+
         try:
             logging.info(f"Attempting {provider}...")
             if provider == "gemini":
@@ -78,23 +138,24 @@ def call_model(prompt, system=None, response_format=None, media_data=None, mime_
             else:
                 result = adapters[provider](prompt, system, response_format == "json", api_key)
             return {
-                "text": result["text"], 
-                "provider_used": provider, 
+                "text": result["text"],
+                "provider_used": provider,
                 "attempt_count": attempt,
                 "usage": result.get("usage", {})
             }
         except urllib.error.HTTPError as e:
-            err_msg = f"HTTP {e.code}: {e.read().decode()}"
+            err_msg = f"HTTP {e.code}: {e.read().decode() if hasattr(e, 'read') else str(e)}"
             history.append(f"{provider}: {err_msg}")
             if e.code in (429, 503, 529):
-                logging.warning(f"[{provider}] Rate-limit/Quota error -> {err_msg}")
+                logging.warning(f"[{provider}] Rate-limit/Quota error (after retry) -> falling through")
             else:
                 logging.warning(f"[{provider}] API error -> {err_msg}")
         except Exception as e:
             history.append(f"{provider}: {str(e)}")
             logging.warning(f"[{provider}] Internal error -> {str(e)}")
-            
+
     raise RuntimeError(f"All providers failed.\nHistory:\n" + "\n".join(history))
+
 
 if __name__ == "__main__":
     print("Testing call_model...")

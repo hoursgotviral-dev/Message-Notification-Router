@@ -71,7 +71,7 @@ def process_row(message_id: str, tables: dict, few_shot: str) -> dict:
         bundle = build_message_bundle(message_id, tables)
         
         # 2. handle media if present
-        if bundle.get("media"):
+        if bundle.get("message", {}).get("media_type"):
             bundle["media_content"] = get_media_content(bundle)
             
         # 3. prefilter logic
@@ -142,13 +142,14 @@ def process_row(message_id: str, tables: dict, few_shot: str) -> dict:
         logger.error(f"Error in pipeline for {message_id}: {e}")
         return safe_default
 
-def make_chunk_step(chunk: list, tables: dict, few_shot: str, output_file: str, spend_cap: float, log_every: int):
+def make_chunk_step(chunk: list, tables: dict, few_shot: str, output_file: str, spend_cap: float, log_every: int, already_processed: set):
     def step_func(state: dict) -> dict:
-        file_exists = os.path.exists(output_file)
-        is_empty = not file_exists or os.path.getsize(output_file) == 0
-        
-        results = []
         for msg_id in chunk:
+            if msg_id in already_processed:
+                continue
+            file_exists = os.path.exists(output_file)
+            is_empty = not file_exists or os.path.getsize(output_file) == 0
+            
             if state["total_cost"] >= spend_cap:
                 logger.error(f"Spend cap of {spend_cap} INR exceeded! Halting.")
                 raise RuntimeError("Spend cap exceeded")
@@ -161,14 +162,12 @@ def make_chunk_step(chunk: list, tables: dict, few_shot: str, output_file: str, 
             if state["rows_processed"] % log_every == 0:
                 logger.info(f"Progress: {state['rows_processed']} rows | Cost: {state['total_cost']:.2f} INR")
                 
-            results.append(res)
-            
-        if results:
             with open(output_file, "a", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=OUTPUT_FIELDNAMES)
                 if is_empty:
                     writer.writeheader()
-                writer.writerows(results)
+                writer.writerow(res)
+                f.flush()
                 
         return state
     return step_func
@@ -186,7 +185,7 @@ def main():
     parser.add_argument("--dataset-dir", default="../dataset/", help="Path to dataset directory")
     parser.add_argument("--checkpoint-dir", default=".checkpoints", help="Directory for checkpoints")
     parser.add_argument("--log-every", type=int, default=1, help="Log progress every N rows")
-    parser.add_argument("--checkpoint-every", type=int, default=10, help="Checkpoint every N rows")
+    parser.add_argument("--checkpoint-every", type=int, default=5, help="Checkpoint every N rows")
     parser.add_argument("--limit", type=int, default=None, help="Process only first N rows (for testing)")
     args = parser.parse_args()
 
@@ -213,11 +212,20 @@ def main():
         
     runner = CheckpointRunner(run_id=run_id, store=store)
     
+    already_processed = set()
+    if os.path.exists(args.output):
+        try:
+            with open(args.output, "r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                already_processed = {row["message_id"] for row in reader if "message_id" in row}
+        except Exception as e:
+            logger.warning(f"Failed to read existing output file for resumption: {e}")
+            
     chunks = [all_message_ids[i:i + args.checkpoint_every] for i in range(0, len(all_message_ids), args.checkpoint_every)]
     
     for i, chunk in enumerate(chunks):
         step_name = f"chunk_{i}"
-        runner.add_step(step_name, make_chunk_step(chunk, tables, few_shot, args.output, spend_cap_inr, args.log_every))
+        runner.add_step(step_name, make_chunk_step(chunk, tables, few_shot, args.output, spend_cap_inr, args.log_every, already_processed))
         
     initial_state = {
         "total_cost": 0.0,

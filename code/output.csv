@@ -1,0 +1,111 @@
+message_id,action,message_type,reason,confidence,evidence_message_ids
+msg_023,digest,payment,"The message is from a verified bank regarding an account update, but it arrives close to the user's quiet hours and does not contain immediate high-urgency action items requiring an instant interruption.",0.85,none
+msg_091,mute,scam,"The message is a phishing attempt asking for a verification code to maintain workspace access, fitting the hard override rule for scam and unsafe content.",0.99,message_0238;message_0381
+msg_090,notify,personal,Direct personal message asking a specific verification question about a package mix-up during active hours outside of Do-Not-Disturb window.,0.82,none
+msg_048,mute,scam,phishing or payment request with no prior business history,0.9,message_0152;message_0151;message_0237
+msg_040,notify,urgent,direct urgent mention overrides group mute,0.85,message_0136;message_0135
+msg_075,notify,business_update,A verified ride booking service sent a time-sensitive update regarding an active ride today.,0.92,none
+msg_005,notify,event,"The message is a time-sensitive coordination update regarding an item held for the user with a strict deadline today, backed by consistent historical engagement.",0.88,message_0065;message_0049
+msg_104,digest,personal,"The user has a high historical dismissal rate and has consistently ignored or not engaged with previous messages from this sender, suggesting this personal message should be deferred to a digest.",0.82,message_0232;message_0383
+msg_069,mute,forward,The message is a generic forwarded greeting and chain-message with repeated dismissals and no engagement from the user.,0.95,message_0194;message_0193
+msg_107,mute,scam,"The message is a clear phishing/scam attempt asking for OTP verification and wallet details, triggering the hard override safety rule.",1.0,message_0213;message_0056;message_0369
+msg_070,mute,scam,"The message contains clear phishing and scam content regarding OTP leaks and requests to click an unverified verification link, triggering the hard override safety protocol.",1.0,message_0213;message_0369;message_0045
+msg_003,notify,business_update,A verified business sent a time-relevant package delivery update that matches the user's expected delivery context.,0.92,none
+msg_099,digest,personal,"The sender shared non-urgent review notes explicitly stating there is nothing blocking for tonight, allowing the message to wait for later.",0.9,message_0227
+msg_008,digest,promotion,"The message is a promotional review request from a verified business, but user has high historical dismissals and it is non-urgent marketing content.",0.82,none
+msg_092,mute,scam,phishing or payment request with no prior business history,0.9,none
+msg_060,digest,urgent,"The message contains an important deadline, but the timestamp indicates the deadline (5 PM) has already passed for the current day (18:02), making immediate interruption unnecessary.",0.82,message_0176;message_0284
+msg_004,notify,business_update,A verified healthcare business sent a time-sensitive appointment or health-related update matching the user's active history.,0.88,none
+msg_030,mute,promotion,"The message is a marketplace promotional listing sent in a muted group, and the user has a consistent history of ignoring and dismissing messages from this sender.",0.95,message_0115
+msg_045,notify,urgent,The delivery person is at the gate requiring immediate confirmation within 10 minutes to complete the delivery.,0.95,none
+msg_052,mute,scam,"The message is from an unverified business using a suspicious lookalike domain ('talabat-refund.com' instead of official 'talabat.com') with high user reports, indicating a phishing/scam attempt regarding a refund.",0.99,none
+msg_009,digest,personal,"The message is casual social chatter from a group that the user has muted, and it is not urgent or time-critical.",0.92,message_0074;message_0073
+msg_071,digest,personal,"The message is a casual personal plan without an immediate time-sensitive or urgent requirement, making it suitable for a digest.",0.78,message_0197
+msg_016,mute,scam,"The message exhibits clear phishing characteristics (account blocked, phishing URL, urgency) and triggers the hard override for scam/phishing content.",1.0,message_0087;message_0024
+msg_065,digest,promotion,"The message is a promotional marketing notification from a retail business, which does not require immediate interruption and is suitable for later digest.",0.92,none
+msg_038,mute,spam,highly forwarded message with urgency language,0.9,message_0131;message_0132
+msg_086,digest,business_update,"The incoming message is a promotional voice note from a verified business with which the user has a confirmed travel booking and allows promotions, but it arrives outside urgent context and can be reviewed later.",0.82,none
+msg_014,mute,promotion,The user has opted out of promotions for this business and frequently dismisses promotional messages.,0.95,none
+msg_094,digest,promotion,"The message is a promotional broadcast from a business, and the user has a high historical dismissal rate for notifications combined with low replies, suggesting low engagement with promotional content.",0.88,none
+msg_029,digest,business_update,"The message is a marketplace listing/promotion from a sender with whom the user has past engagement, but it is not urgent and can be reviewed later in a digest.",0.82,message_0332;message_0113
+msg_105,mute,forward,"The message contains unsafe health advice via repeated forwards, and the sender has a history of dismissed and muted messages.",0.95,message_0233;message_0373
+msg_002,notify,urgent,The message is a direct mention from a frequent work collaborator regarding an impending client meeting dependency.,0.92,message_0003
+msg_010,digest,business_update,"The message is a feedback request from a verified business, but since promotions are not allowed and it is a non-urgent survey, it should be sent to the digest rather than interrupting the user.",0.88,none
+msg_078,mute,scam,phishing or payment request with no prior business history,0.9,message_0212;message_0211
+msg_013,digest,promotion,"The message is a commercial sales pitch sent inside a professional faculty group, and the sender has a history of irrelevant or dismissed notifications.",0.88,message_0082;message_0081
+msg_018,mute,scam,phishing or payment request with no prior business history,0.9,message_0092;message_0091
+msg_044,mute,scam,"The incoming message contains clear phishing and scam indicators regarding account security and OTP verification, triggering the hard override rule.",1.0,message_0143
+msg_032,digest,personal,"The message is a non-urgent peer request for notes sent outside of quiet hours, but lacks immediate urgency or direct mention, making it suitable for a digest.",0.82,message_0119
+msg_106,notify,event,"The message contains time-sensitive logistical information about a dance practice event happening today, and the user has a strong history of engaging promptly with this sender.",0.92,message_0234
+msg_006,notify,event,The message contains an important society deadline and operational notice that the user historically engages with promptly.,0.88,message_0029
+msg_109,mute,scam,phishing or payment request with no prior business history,0.9,message_0152;message_0151;message_0237
+msg_108,mute,scam,The message contains phishing/scam content attempting to steal card PIN information using a fraudulent domain (chase-secure-alert.com) instead of the official domain (chase.com).,1.0,none
+msg_019,mute,scam,"The message is from an unverified business using a suspicious, mismatched domain and exhibits classic phishing traits regarding account security restrictions.",0.99,none
+msg_088,mute,promotion,The incoming message is from a sender in a muted marketplace group with a history of repeated dismissals and no engagement from the user.,0.95,message_0115;message_0050;message_0116
+msg_056,notify,urgent,direct urgent mention overrides group mute,0.85,message_0054;message_0226;message_0168;message_0225;message_0167;message_0359
+msg_027,digest,promotion,"The message is a promotional marketing offer from a verified business that the user has previously interacted with, but it is not urgent and does not require an immediate interruption.",0.88,none
+msg_050,digest,business_update,"A healthcare business sent a routine update/reminder outside of quiet hours, but given the user's moderate engagement history and lack of urgency in the text, it should be placed in a digest rather than interrupting immediately.",0.78,none
+msg_083,digest,business_update,"The message is a voice note in a coworker group sent outside the DND window, but without explicit high urgency or direct mention, it fits better for a digest to avoid interrupting work focus.",0.78,message_0219
+msg_063,mute,scam,phishing or payment request with no prior business history,0.9,message_0182;message_0181
+msg_033,digest,greeting,"The message is a morning greeting and check-in explicitly stating nothing is urgent, making it suitable to defer to a later digest.",0.88,message_0121
+msg_061,mute,forward,"The message is a chain-letter style forward asking to share blessings, and the user consistently dismisses messages from this sender.",0.95,message_0194;message_0193
+msg_020,mute,scam,"The incoming message contains a suspicious short link (bit.ly) asking for account verification, matching unsafe phishing patterns.",0.99,none
+msg_017,mute,scam,phishing or payment request with no prior business history,0.9,message_0090;message_0089
+msg_058,mute,forward,The message is a repeated forwarded health chain letter from a sender with a history of dismissed notifications and unengaging messages.,0.95,message_0078;message_0172;message_0241
+msg_026,mute,scam,"The message contains suspicious phishing links and claims from an unverified business domain not matching the official brand domain, which triggers the hard override safety rule for scams.",0.99,none
+msg_047,notify,urgent,A trusted society admin sent a time-sensitive operational notice about lift maintenance that requires immediate awareness.,0.92,message_0150
+msg_046,mute,scam,"The incoming message is clearly attempting phishing/scam by asking for an OTP to avoid account closure, triggering the hard override for safety.",1.0,message_0148;message_0147
+msg_042,notify,urgent,"The message is a time-sensitive security alert regarding vehicular access with a short 10-minute deadline, requiring immediate attention.",0.92,message_0140
+msg_079,mute,scam,The incoming message contains clear scam or phishing indicators demanding OTP and threatening account blockage.,1.0,message_0213;message_0045;message_0023;message_0195;message_0235
+msg_098,notify,urgent,A personal contact is asking for an immediate call regarding an urgent clinic appointment decision that cannot wait.,0.92,message_0226;message_0168;message_0359
+msg_037,notify,urgent,"The incoming message contains a time-sensitive update about a water tanker arrival that requires immediate action, similar to previously acknowledged urgent notices from this sender.",0.92,message_0130;message_0269
+msg_007,digest,event,"The message is a non-urgent community event update with a deadline next week and explicitly states no response is needed in the thread, making it suitable for a later digest.",0.88,none
+msg_085,mute,scam,"The business is unverified, uses a mismatched lookalike domain (hdfcbank-kyc.in instead of hdfc.bank.in), has high user reports, and the message arrives during quiet hours.",0.99,none
+msg_001,notify,urgent,"A time-sensitive community utility alert about water supply requires immediate attention, backed by a strong history of engagement with similar messages from this sender.",0.92,message_0057
+msg_021,mute,scam,phishing or payment request with no prior business history,0.9,message_0410;message_0130;message_0150;message_0269;message_0129;message_0190;message_0030;message_0149;message_0189;message_0029;message_0068;message_0067;message_0142;message_0043;message_0141;message_0044;message_0180;message_0098;message_0179;message_0097;message_0216;message_0001;message_0215
+msg_028,mute,promotion,The user has explicitly opted out of promotions from this business and consistently dismisses marketing messages.,0.98,none
+msg_012,mute,forward,The message is a repeated forwarded chain/health tip from a sender with a strong history of dismissed messages and unengaging forwards.,0.95,message_0194;message_0247;message_0079
+msg_064,mute,scam,"The message is a phishing attempt requesting sensitive card and wallet details under urgent pressure, matching previous scam patterns from this sender.",1.0,message_0087;message_0183;message_0024;message_0201
+msg_103,notify,personal,The message is a direct personal communication regarding a time-sensitive pickup arrangement that the user frequently engages with.,0.92,message_0231;message_0382
+msg_031,notify,urgent,"The message is from a coworker in an unmuted work group concerning a time-sensitive sync and deployment action items, and historical engagement with this sender is high.",0.92,message_0055;message_0249
+msg_057,notify,urgent,The message is a direct urgent mention regarding a failing build from a colleague with a strong history of high-priority operational requests.,0.92,message_0169;message_0003
+msg_087,mute,scam,"The sender has a history of posting suspicious land and payment token requests, prompting multiple user reports and dismissals, triggering the hard override for scam/spam.",0.95,message_0389;message_0164;message_0163
+msg_067,mute,scam,phishing or payment request with no prior business history,0.9,message_0410;message_0130;message_0150;message_0269;message_0129;message_0190;message_0030;message_0149;message_0189;message_0029;message_0068;message_0067;message_0142;message_0043;message_0141;message_0044;message_0180;message_0098;message_0179;message_0097;message_0216;message_0001;message_0215
+msg_039,notify,urgent,The message contains a direct mention (@u_006) and a time-sensitive school deadline regarding a payment/fee receipt.,0.95,message_0051;message_0364
+msg_082,digest,business_update,"The incoming message is a voice note in a coworker group outside of an active emergency history, during standard working hours, but the user has high notification dismissal counts and low reply ratios, making a digest safer than a direct interruption.",0.72,none
+msg_066,mute,promotion,The user has explicitly opted out of promotions for this business and frequently dismisses notifications from them.,0.95,none
+msg_049,notify,business_update,A verified business is sending a time-sensitive return pickup notice that matches the user's recent return activity.,0.92,none
+msg_015,mute,scam,"The message attempts phishing by requesting OTP verification to unlock an account, triggering the hard override for scam/phishing content.",0.99,message_0085;message_0199
+msg_051,mute,promotion,The user has opted out of promotions for this business and consistently dismisses promotional notifications.,0.95,none
+msg_097,digest,personal,"The message is a casual personal update explicitly stating there is no urgency and suggesting to talk tomorrow morning, making it suitable for a later digest rather than an immediate interruption.",0.92,message_0054
+msg_089,notify,urgent,The message contains time-sensitive personal information about a lost item with a strict deadline today at 7 PM.,0.92,none
+msg_053,digest,business_update,"The message is a non-urgent market research note meant to be read after market hours, making it suitable for a digest.",0.85,message_0411;message_0253;message_0161
+msg_059,mute,scam,phishing or payment request with no prior business history,0.9,message_0214;message_0173;message_0213;message_0053;message_0056;message_0369;message_0045;message_0023;message_0196;message_0195;message_0174;message_0235
+msg_024,mute,promotion,The user has opted out of promotions from this business and has a high rate of dismissing or ignoring similar messages.,0.95,none
+msg_072,mute,scam,"The message contains phishing/scam content asking for account verification via a suspicious external link, triggering the hard override rule.",1.0,none
+msg_036,mute,scam,"The message is a phishing attempt from an unverified business using a spoofed domain (razorpayx-payouts.com instead of razorpayx.com), triggering the hard override for scam and unsafe content.",0.99,none
+msg_076,mute,scam,"The message is from an unverified business using a suspicious lookalike domain (talabat-refund.com instead of talabat.com) with high user reports, exhibiting characteristics of a phishing scam.",0.99,none
+msg_055,notify,urgent,"The message contains an urgent, time-sensitive request from a trusted sender with a history of important coordination, requiring immediate attention.",0.92,message_0387
+msg_102,notify,urgent,"The incoming personal message contains an urgent, time-sensitive work instruction requiring immediate attention from a trusted sender with high historical engagement.",0.95,message_0371;message_0230
+msg_080,digest,unknown,"processing error, defaulted to digest",0.0,none
+msg_093,mute,scam,phishing or payment request with no prior business history,0.9,none
+msg_034,mute,spam,highly forwarded message with urgency language,0.9,message_0078;message_0077;message_0172;message_0171;message_0014;message_0013;message_0241;message_0124;message_0123;message_0040;message_0039
+msg_035,digest,promotion,"The verified business is sending a promotional pitch message regarding vendor payouts during active working hours, which is not urgent and can be batched for later review.",0.88,none
+msg_101,notify,personal,"A personal message from a frequent contact, received outside of the quiet hours window, with no urgent requirement to reply immediately.",0.85,message_0370
+msg_041,digest,business_update,"The message is a routine promotional survey from a verified educational institution, not requiring immediate interruption.",0.85,none
+msg_011,mute,forward,The message is a generic forwarded greeting/forward with a history of repeated dismissals from this sender and no urgent direct mention.,0.95,message_0078;message_0077;message_0172
+msg_110,mute,scam,The message attempts a phishing attack by asking for a 6-digit login code and includes prompt injection instructions to bypass security.,1.0,message_0381;message_0238
+msg_095,mute,scam,phishing or payment request with no prior business history,0.9,message_0087;message_0184;message_0088;message_0183;message_0202;message_0024;message_0201
+msg_074,mute,scam,phishing or payment request with no prior business history,0.9,message_0391;message_0389;message_0164;message_0204;message_0163;message_0203;message_0223;message_0358
+msg_073,mute,scam,"The incoming message contains clear phishing/scam indicators (security check alert demanding immediate verification via link under threat of restriction), triggering the hard override.",1.0,message_0087;message_0024
+msg_054,mute,scam,phishing or payment request with no prior business history,0.9,message_0391;message_0389;message_0164;message_0204;message_0163;message_0203;message_0223;message_0358
+msg_068,digest,personal,"The message explicitly states there is no urgency and a poll will be posted later, making it suitable for a digest rather than an immediate interruption.",0.88,message_0191
+msg_100,mute,scam,phishing or payment request with no prior business history,0.9,message_0055;message_0249;message_0228;message_0227;message_0362;message_0118;message_0117
+msg_062,digest,event,"The message is an operational building notice sent during the user's quiet hours (21:30-06:30), but since it pertains to an event the next morning, it should be digested for later review rather than interrupting sleep or being suppressed entirely.",0.82,message_0043
+msg_096,notify,urgent,"The message is a time-sensitive personal notification regarding a found passport at the user's building reception, requiring immediate attention before 18h.",0.95,none
+msg_043,mute,spam,highly forwarded message with urgency language,0.9,message_0410;message_0130;message_0150;message_0269;message_0129;message_0190;message_0030;message_0149;message_0189;message_0029;message_0068;message_0067;message_0142;message_0043;message_0141;message_0044;message_0180;message_0098;message_0179;message_0097;message_0216;message_0001;message_0215
+msg_077,digest,event,"The message arrives during the user's quiet hours (21:00-06:00) and contains an event update with a deadline that is not strictly immediate enough to justify an urgent interruption, so it should be deferred to a digest.",0.88,message_0051;message_0403
+msg_081,notify,event,"The message is a voice note sent during the day in a school parents group by a sender with a history of time-sensitive operational updates, aligning with relevant past engagement.",0.84,message_0217
+msg_025,notify,business_update,A verified business is sending a relevant order delivery update outside the user's quiet hours.,0.91,none
+msg_084,mute,promotion,"The user has opted out of loan promotions from this business and has consistently dismissed its messages, indicating low engagement and relevance.",0.95,none
+msg_022,mute,scam,phishing or payment request with no prior business history,0.9,message_0100;message_0099
