@@ -18,11 +18,18 @@ def hard_override_check(bundle: dict) -> tuple[str, str, str, float] | None:
     full_text = get_full_text(bundle).lower()
     msg = bundle.get("message", {})
     
-    phishing_kws = ["prize", "win", "winner", "claim", "urgent payment", "phishing", "scam", "free money", "lottery"]
-    payment_kws = ["pay", "payment", "bank", "credit card", "ssn", "social security", "account number", "transfer", "wire", "invoice"]
+    phishing_kws = ["prize", "win", "winner", "urgent payment", "phishing", "scam", "free money", "lottery"]
+    payment_kws = ["pay", "payment", "bank", "credit card", "ssn", "social security", "account number", "transfer", "wire", "invoice", "claim"]
     urgency_kws = ["urgent", "emergency", "asap", "help", "call me", "now"]
+    sensitive_kws = ["otp", "pin", "verification code", "login", "password", "card number", "cvv"]
+    
+    has_phishing = contains_any(full_text, phishing_kws)
+    has_payment = contains_any(full_text, payment_kws)
+    has_urgency = contains_any(full_text, urgency_kws)
+    has_sensitive = contains_any(full_text, sensitive_kws)
+    has_suspicious_link = bool(re.search(r'(bit\.ly|http://)', full_text))
 
-    has_phishing_or_payment = contains_any(full_text, phishing_kws) or contains_any(full_text, payment_kws)
+    has_phishing_or_payment = has_phishing or (has_payment and (has_suspicious_link or has_urgency or has_sensitive))
     
     if has_phishing_or_payment:
         ubh = bundle.get("user_business_history", {})
@@ -50,8 +57,12 @@ def hard_override_check(bundle: dict) -> tuple[str, str, str, float] | None:
     except ValueError:
         fwd_count = 0
         
-    if fwd_count >= 5 and contains_any(full_text, urgency_kws):
-        return ("mute", "spam", "highly forwarded message with urgency language", 0.9)
+    forward_spam_kws = ["forward this", "share this", "do not ignore", "sending to all", "blessings", "luck changes", "share with"]
+    if fwd_count >= 5:
+        if contains_any(full_text, urgency_kws):
+            return ("mute", "spam", "highly forwarded message with urgency language", 0.9)
+        elif contains_any(full_text, forward_spam_kws):
+            return ("mute", "spam", "highly forwarded chain-message pattern (mass-share request)", 0.9)
         
     return None
 
@@ -67,16 +78,16 @@ def upgrade_override_check(bundle: dict) -> tuple[str, str, str, float] | None:
         
     full_text = get_full_text(bundle).lower()
     
-    user_id = bundle.get("user", {}).get("user_id")
-    has_mention = False
-    if user_id and str(user_id).lower() in full_text:
-        has_mention = True
-        
     upgrade_urgency_kws = ["urgent", "emergency", "call me", "asap", "help now"]
     has_urgency = contains_any(full_text, upgrade_urgency_kws)
     
-    if has_mention or has_urgency:
-        return ("notify", "urgent", "direct urgent mention overrides group mute", 0.85)
+    user_id = bundle.get("message", {}).get("user_id")
+    has_mention = user_id and f"@{user_id}".lower() in full_text
+    
+    if has_urgency:
+        return ("notify", "urgent", "urgent language overrides group mute", 0.85)
+    elif has_mention:
+        return ("notify", "urgent", "direct mention overrides group mute", 0.85)
         
     return None
 

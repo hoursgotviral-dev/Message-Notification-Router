@@ -8,7 +8,7 @@ import argparse
 from llm_client import call_model
 from checkpoint import CheckpointRunner, FileStateStore
 
-from context_assembly import load_tables, build_message_bundle
+from context_assembly import load_tables, build_message_bundle, evidence_candidates
 from media_preprocessing import get_media_content
 from prefilter import should_prefilter_mute
 from safety_gate import apply_safety_gates
@@ -46,9 +46,6 @@ def calculate_cost_inr(provider: str, usage: dict) -> float:
     cost_usd = (in_tokens * rates["input"]) + (out_tokens * rates["output"])
     return cost_usd * USD_TO_INR
 
-def evidence_candidates(bundle: dict) -> list:
-    hist = bundle.get("sender_history", [])
-    return [str(m["message_id"]) for m in hist if "message_id" in m]
 
 def format_evidence(candidates: list) -> str:
     if not candidates or candidates == ["none"]:
